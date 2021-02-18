@@ -1,9 +1,10 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { Direction } from './type/Direction';
 
-const useScrollFadeIn = (direction = 'up', duration = 1, delay = 0) => {
-  const element = useRef();
+const useScrollFadeIn = (direction = Direction.up, duration = 1, delay = 0) => {
+  const element = useRef<any>(null);
 
-  const handleDirection = (name) => {
+  const handleDirection = (name: Direction) => {
     switch (name) {
       case 'up':
         return 'translate3d(0, 50%, 0)';
@@ -21,12 +22,12 @@ const useScrollFadeIn = (direction = 'up', duration = 1, delay = 0) => {
   const onScroll = useCallback(
     ([entry]) => {
       const { current } = element;
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && current) {
         current.style.transitionProperty = 'all';
         current.style.transitionDuration = `${duration}s`;
         current.style.transitionTimingFunction = 'cubic-bezier(0, 0, 0.2, 1)';
         current.style.transitionDelay = `${delay}s`;
-        current.style.opacity = 1;
+        current.style.opacity = '1';
         current.style.transform = 'translate3d(0, 0, 0)';
       }
     },
@@ -34,7 +35,7 @@ const useScrollFadeIn = (direction = 'up', duration = 1, delay = 0) => {
   );
 
   useEffect(() => {
-    let observer;
+    let observer: IntersectionObserver;
 
     if (element.current) {
       observer = new IntersectionObserver(onScroll, { threshold: 0.7 });

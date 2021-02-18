@@ -1,10 +1,17 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { Direction } from './type/Direction';
 
-const useScrollClipPath = (direction = 'left', duration = 1, delay = 0) => {
-  const element = useRef();
+interface IuseScrollClipPathProps {
+  direction: Direction;
+  duration: number;
+  delay: number;
+}
 
-  const handleClipPath = (name) => {
-    switch (name) {
+const useScrollClipPath = (direction = Direction.left, duration = 1, delay = 0) => {
+  const element = useRef<HTMLInputElement>(null);
+
+  const handleClipPath = (direction: Direction) => {
+    switch (direction) {
       case 'up':
         return 'inset(100% 0 0 0)';
       case 'down':
@@ -21,7 +28,7 @@ const useScrollClipPath = (direction = 'left', duration = 1, delay = 0) => {
   const onScroll = useCallback(
     ([entry]) => {
       const { current } = element;
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && current) {
         current.style.transitionProperty = 'transform, clip-path';
         current.style.transitionDuration = `${duration * 1.5}s, ${duration}s`;
         current.style.transitionTimingFunction = 'cubic-bezier(0, 0, 0.2, 1)';
@@ -37,7 +44,7 @@ const useScrollClipPath = (direction = 'left', duration = 1, delay = 0) => {
     let observer;
 
     if (element.current) {
-      observer = new IntersectionObserver(onScroll, { threshold: 0.7 });
+      observer = new IntersectionObserver(onScroll, { threshold: 0.5 });
       observer.observe(element.current.parentNode);
     }
 
